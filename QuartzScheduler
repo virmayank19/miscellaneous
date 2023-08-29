@@ -94,3 +94,38 @@ public class CustomMonthlyCalendar extends BaseCalendar {
         return included;
     }
 }
+
+///////////////////////////
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.calendar.MonthlyCalendar;
+
+public class SchedulerExample {
+
+    public static void main(String[] args) throws SchedulerException {
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        Scheduler scheduler = schedulerFactory.getScheduler();
+
+        int targetDayOfMonth = 10;
+        boolean adjustWeekend = true;
+
+        Calendar calendar = new CustomMonthlyCalendar(targetDayOfMonth, adjustWeekend);
+        MonthlyCalendar monthlyCalendar = new MonthlyCalendar(calendar);
+
+        JobDetail jobDetail = JobBuilder.newJob(YourJobClass.class)
+                .withIdentity("myJob", "group1")
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("myTrigger", "group1")
+                .startNow()
+                .modifiedByCalendar("customCalendar")  // Associate with the custom calendar
+                .build();
+
+        scheduler.addCalendar("customCalendar", monthlyCalendar, false, false);
+        scheduler.scheduleJob(jobDetail, trigger);
+
+        scheduler.start();
+    }
+}
+
