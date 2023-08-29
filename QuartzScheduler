@@ -1,0 +1,96 @@
+import org.quartz.impl.calendar.BaseCalendar;
+
+public class CustomMonthlyCalendar extends BaseCalendar {
+
+    private boolean adjustWeekend;
+    private int dayOfMonth;
+
+    public CustomMonthlyCalendar(int dayOfMonth, boolean adjustWeekend) {
+        this.adjustWeekend = adjustWeekend;
+        this.dayOfMonth = dayOfMonth;
+    }
+
+    @Override
+    public boolean isTimeIncluded(long timeStamp) {
+        boolean included = super.isTimeIncluded(timeStamp);
+
+        if (included) {
+            int dayOfWeek = getDayOfWeek(timeStamp);
+            int currentMonthDay = getDayOfMonth(timeStamp);
+
+            if (currentMonthDay == dayOfMonth) {
+                if (adjustWeekend) {
+                    if (dayOfWeek == SATURDAY) {
+                        // Move to Monday (next day)
+                        timeStamp = moveTimeToNextDayOfWeek(timeStamp, MONDAY);
+                    } else if (dayOfWeek == SUNDAY) {
+                        // Move to Monday (previous day)
+                        timeStamp = moveTimeToPreviousDayOfWeek(timeStamp, MONDAY);
+                    }
+                }
+            }
+        }
+
+        return super.isTimeIncluded(timeStamp);
+    }
+
+    private long moveTimeToNextDayOfWeek(long timeStamp, int dayOfWeek) {
+        int currentDayOfWeek = getDayOfWeek(timeStamp);
+        int daysUntilNextDay = (dayOfWeek - currentDayOfWeek + 7) % 7;
+        return addDays(timeStamp, daysUntilNextDay);
+    }
+
+    private long moveTimeToPreviousDayOfWeek(long timeStamp, int dayOfWeek) {
+        int currentDayOfWeek = getDayOfWeek(timeStamp);
+        int daysUntilPreviousDay = (currentDayOfWeek - dayOfWeek + 7) % 7;
+        return subtractDays(timeStamp, daysUntilPreviousDay);
+    }
+
+    private long addDays(long timeStamp, int days) {
+        return timeStamp + days * 24L * 60 * 60 * 1000;
+    }
+
+    private long subtractDays(long timeStamp, int days) {
+        return timeStamp - days * 24L * 60 * 60 * 1000;
+    }
+}
+
+
+//////////////////////
+
+import org.quartz.impl.calendar.BaseCalendar;
+
+public class CustomMonthlyCalendar extends BaseCalendar {
+
+    private boolean adjustWeekend;
+    private int dayOfMonth;
+
+    public CustomMonthlyCalendar(int dayOfMonth, boolean adjustWeekend) {
+        this.adjustWeekend = adjustWeekend;
+        this.dayOfMonth = dayOfMonth;
+    }
+
+    @Override
+    public boolean isTimeIncluded(long timeStamp) {
+        boolean included = super.isTimeIncluded(timeStamp);
+
+        if (included) {
+            int dayOfWeek = getDayOfWeek(timeStamp);
+            int currentMonthDay = getDayOfMonth(timeStamp);
+
+            if (currentMonthDay == dayOfMonth) {
+                if (adjustWeekend) {
+                    if (dayOfWeek == SATURDAY) {
+                        // Move to Monday (next day)
+                        return false;
+                    } else if (dayOfWeek == SUNDAY) {
+                        // Move to Monday (previous day)
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return included;
+    }
+}
