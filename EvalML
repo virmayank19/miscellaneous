@@ -1,6 +1,7 @@
 import streamlit as st
 import evalml
 import pandas as pd
+import numpy as np
 
 # Create a Streamlit app
 st.title("AutoML with EvalML")
@@ -35,6 +36,9 @@ if uploaded_file is not None:
     }
     evalml_problem_type = problem_type_mapping[problem_type]
 
+    # Convert y to a 1D numpy array
+    y = np.array(y)
+
     # Run AutoML using EvalML
     automl = evalml.AutoMLSearch(
         problem_type=evalml_problem_type,
@@ -46,16 +50,16 @@ if uploaded_file is not None:
     )
 
     # Search for the best pipeline
-    automl.search(df, y)
+    automl.search(X=df, y=y)  # Provide X and y here
 
     # Get the best pipeline
     best_pipeline = automl.best_pipeline
 
     # Fit the best pipeline on the data
-    best_pipeline.fit(df, y)
+    best_pipeline.fit(X=df, y=y)  # Provide X and y here
 
     # Evaluate the pipeline
-    scores = best_pipeline.score(df, y, objectives=["accuracy"])
+    scores = best_pipeline.score(X=df, y=y, objectives=["accuracy"])
 
     # Print the accuracy score
     st.write(f"Accuracy Score: {scores['Accuracy']}")
