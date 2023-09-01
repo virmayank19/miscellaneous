@@ -39,35 +39,40 @@ if uploaded_file is not None:
     # Convert y to a 1D numpy array
     y = np.array(y)
 
-    # Run AutoML using EvalML
-    automl = evalml.AutoMLSearch(
-        problem_type=evalml_problem_type,
-        objective="auto",  # Auto-detect the appropriate objective
-        max_batches=1,
-        n_jobs=-1,
-        verbose=True,
-        random_seed=42,
-    )
+    # Add a "Run" button
+    if st.button("Run AutoML"):
+        # Create a progress bar to indicate the training progress
+        progress_bar = st.progress(0)
 
-    # Search for the best pipeline
-    automl.search(X=df, y=y)  # Provide X and y here
+        # Run AutoML using EvalML
+        automl = evalml.AutoMLSearch(
+            problem_type=evalml_problem_type,
+            objective="auto",  # Auto-detect the appropriate objective
+            max_batches=1,
+            n_jobs=-1,
+            verbose=True,
+            random_seed=42,
+        )
 
-    # Get the best pipeline
-    best_pipeline = automl.best_pipeline
+        # Search for the best pipeline
+        automl.search(X=df, y=y, show_progress_bars=True, progress_bar=progress_bar)  # Provide X and y here
 
-    # Fit the best pipeline on the data
-    best_pipeline.fit(X=df, y=y)  # Provide X and y here
+        # Get the best pipeline
+        best_pipeline = automl.best_pipeline
 
-    # Evaluate the pipeline
-    scores = best_pipeline.score(X=df, y=y, objectives=["accuracy"])
+        # Fit the best pipeline on the data
+        best_pipeline.fit(X=df, y=y)  # Provide X and y here
 
-    # Print the accuracy score
-    st.write(f"Accuracy Score: {scores['Accuracy']}")
+        # Evaluate the pipeline
+        scores = best_pipeline.score(X=df, y=y, objectives=["accuracy"])
 
-    # Display information about the best pipeline
-    st.subheader("Best Pipeline Information")
-    st.write(best_pipeline)
+        # Print the accuracy score
+        st.write(f"Accuracy Score: {scores['Accuracy']}")
 
-    # Display the best pipeline's graph
-    st.subheader("Best Pipeline Graph")
-    st.image(automl.best_pipeline.graph(), use_container_width=True)
+        # Display information about the best pipeline
+        st.subheader("Best Pipeline Information")
+        st.write(best_pipeline)
+
+        # Display the best pipeline's graph
+        st.subheader("Best Pipeline Graph")
+        st.image(automl.best_pipeline.graph(), use_container_width=True)
