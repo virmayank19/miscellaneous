@@ -44,6 +44,10 @@ if uploaded_file is not None:
         # Create a progress bar to indicate the training progress
         progress_bar = st.progress(0)
 
+        # Convert DataFrame to NumPy arrays for X_train and y_train
+        X_train = df.to_numpy()
+        y_train = y
+
         # Run AutoML using EvalML
         automl = evalml.AutoMLSearch(
             problem_type=evalml_problem_type,
@@ -55,16 +59,16 @@ if uploaded_file is not None:
         )
 
         # Search for the best pipeline
-        automl.search(X_train=df, y_train=y, show_progress_bars=True, progress_bar=progress_bar)  # Use X_train and y_train here
+        automl.search(X_train=X_train, y_train=y_train, show_progress_bars=True, progress_bar=progress_bar)
 
         # Get the best pipeline
         best_pipeline = automl.best_pipeline
 
         # Fit the best pipeline on the data
-        best_pipeline.fit(X_train=df, y_train=y)  # Use X_train and y_train here
+        best_pipeline.fit(X_train=X_train, y_train=y_train)
 
         # Evaluate the pipeline
-        scores = best_pipeline.score(X=df, y=y, objectives=["accuracy"])
+        scores = best_pipeline.score(X=df.to_numpy(), y=y, objectives=["accuracy"])
 
         # Print the accuracy score
         st.write(f"Accuracy Score: {scores['Accuracy']}")
