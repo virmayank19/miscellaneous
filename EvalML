@@ -55,13 +55,13 @@ if uploaded_file is not None:
         )
 
         # Search for the best pipeline
-        automl.search(X=df, y=y, show_progress_bars=True, progress_bar=progress_bar)  # Provide X and y here
+        automl.search(X_train=df, y_train=y, show_progress_bars=True, progress_bar=progress_bar)  # Use X_train and y_train here
 
         # Get the best pipeline
         best_pipeline = automl.best_pipeline
 
         # Fit the best pipeline on the data
-        best_pipeline.fit(X=df, y=y)  # Provide X and y here
+        best_pipeline.fit(X_train=df, y_train=y)  # Use X_train and y_train here
 
         # Evaluate the pipeline
         scores = best_pipeline.score(X=df, y=y, objectives=["accuracy"])
