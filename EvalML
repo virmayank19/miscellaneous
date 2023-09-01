@@ -1,0 +1,69 @@
+import streamlit as st
+import evalml
+import pandas as pd
+
+# Create a Streamlit app
+st.title("AutoML with EvalML")
+
+# Upload a CSV file
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+if uploaded_file is not None:
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(uploaded_file)
+
+    # Display the DataFrame
+    st.write("Uploaded DataFrame:", df)
+
+    # Create a list of columns from the DataFrame
+    columns = df.columns.tolist()
+
+    # Ask the user to select the target column
+    target_column = st.selectbox("Select the target column", columns)
+
+    # Specify the target column
+    df, y = df.drop(columns=[target_column]), df[target_column]
+
+    # Ask the user to select the problem type
+    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
+
+    # Map the problem type to EvalML's problem_type argument
+    problem_type_mapping = {
+        "binary classification": "binary",
+        "multiclass classification": "multiclass",
+        "regression": "regression",
+    }
+    evalml_problem_type = problem_type_mapping[problem_type]
+
+    # Run AutoML using EvalML
+    automl = evalml.AutoMLSearch(
+        problem_type=evalml_problem_type,
+        objective="auto",  # Auto-detect the appropriate objective
+        max_batches=1,
+        n_jobs=-1,
+        verbose=True,
+        random_seed=42,
+    )
+
+    # Search for the best pipeline
+    automl.search(df, y)
+
+    # Get the best pipeline
+    best_pipeline = automl.best_pipeline
+
+    # Fit the best pipeline on the data
+    best_pipeline.fit(df, y)
+
+    # Evaluate the pipeline
+    scores = best_pipeline.score(df, y, objectives=["accuracy"])
+
+    # Print the accuracy score
+    st.write(f"Accuracy Score: {scores['Accuracy']}")
+
+    # Display information about the best pipeline
+    st.subheader("Best Pipeline Information")
+    st.write(best_pipeline)
+
+    # Display the best pipeline's graph
+    st.subheader("Best Pipeline Graph")
+    st.image(automl.best_pipeline.graph(), use_container_width=True)
