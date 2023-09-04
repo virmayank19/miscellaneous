@@ -1,0 +1,69 @@
+import java.util.Calendar;
+import java.util.Date;
+
+public class CustomScheduler {
+
+    private int nthDay;
+    private String adjustment;
+
+    public CustomScheduler(int nthDay, String adjustment) {
+        this.nthDay = nthDay;
+        this.adjustment = adjustment;
+    }
+
+    public boolean isTimeIncluded(long timeStamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeStamp);
+
+        // Calculate the nth day of the current month
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int targetDay = nthDay;
+
+        // Check if the target day is greater than the number of days in the current month
+        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        if (targetDay > daysInMonth) {
+            return false; // There are not enough days in this month, so the job can't run
+        }
+
+        // Set the calendar to the nth day
+        calendar.set(Calendar.DAY_OF_MONTH, targetDay);
+
+        // Get the day of the week for the nth day (1 = Sunday, 2 = Monday, ..., 7 = Saturday)
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+        // Check if nthDay is the first day and falls on a weekend
+        if (targetDay == 1 && (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)) {
+            if (adjustment.equals("previous")) {
+                return false; // Cannot adjust to the previous month in this case
+            }
+        }
+
+        // Check if nthDay is the last day of the month and falls on a weekend
+        if (targetDay == daysInMonth && (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)) {
+            if (adjustment.equals("next")) {
+                return false; // Cannot adjust to the next month in this case
+            }
+        }
+
+        // If the nth day is a weekend and it's not the first or last day of the month, adjust it based on the user's input
+        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+            if (adjustment.equals("next")) {
+                // Move to the next Monday
+                calendar.add(Calendar.DAY_OF_MONTH, (dayOfWeek == Calendar.SATURDAY) ? 2 : 1);
+            } else if (adjustment.equals("previous")) {
+                // Move to the previous Friday
+                calendar.add(Calendar.DAY_OF_MONTH, (dayOfWeek == Calendar.SATURDAY) ? -1 : -2);
+            }
+        }
+
+        // Return true if the current date is the same as the calculated nth day, otherwise false
+        return dayOfMonth == targetDay && calendar.get(Calendar.MONTH) == Calendar.getInstance().get(Calendar.MONTH);
+    }
+
+    public static void main(String[] args) {
+        CustomScheduler scheduler = new CustomScheduler(1, "previous");
+        long timeStamp = System.currentTimeMillis();
+        boolean isIncluded = scheduler.isTimeIncluded(timeStamp);
+        System.out.println("Is Included: " + isIncluded);
+    }
+}
