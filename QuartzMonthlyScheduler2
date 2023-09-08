@@ -67,3 +67,66 @@ public class CustomScheduler {
         System.out.println("Is Included: " + isIncluded);
     }
 }
+//////////////////
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
+
+public class DateCalculator {
+
+    public static LocalDate getDateForRelativeDay(LocalDateTime dateTime, String day, String index) {
+        // Get the month from the provided dateTime
+        Month month = dateTime.getMonth();
+
+        // Convert the day and index strings to their corresponding enum values
+        DayOfWeek dayOfWeek = day.equalsIgnoreCase("Day") ? null : DayOfWeek.valueOf(day.toUpperCase());
+        IndexType indexType = IndexType.valueOf(index.toUpperCase());
+
+        // Calculate the date based on the index and day
+        LocalDate date = LocalDate.of(dateTime.getYear(), month, 1);
+
+        switch (indexType) {
+            case FIRST:
+                if (dayOfWeek == null) {
+                    // Return the first day of the month
+                    return date;
+                }
+                date = date.with(TemporalAdjusters.firstInMonth(dayOfWeek));
+                break;
+            case SECOND:
+                date = date.with(TemporalAdjusters.dayOfWeekInMonth(2, dayOfWeek));
+                break;
+            case THIRD:
+                date = date.with(TemporalAdjusters.dayOfWeekInMonth(3, dayOfWeek));
+                break;
+            case FOURTH:
+                date = date.with(TemporalAdjusters.dayOfWeekInMonth(4, dayOfWeek));
+                break;
+            case LAST:
+                if (dayOfWeek == null) {
+                    // Return the last day of the month
+                    return date.with(TemporalAdjusters.lastDayOfMonth());
+                }
+                date = date.with(TemporalAdjusters.lastInMonth(dayOfWeek));
+                break;
+        }
+
+        return date;
+    }
+
+    public static void main(String[] args) {
+        LocalDateTime dateTime = LocalDateTime.now(); // You can provide any date and time here
+        String day = "Day";
+        String index = "Last";
+
+        LocalDate result = getDateForRelativeDay(dateTime, day, index);
+        System.out.println("Result: " + result);
+    }
+}
+
+enum IndexType {
+    FIRST, SECOND, THIRD, FOURTH, LAST
+}
