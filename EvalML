@@ -80,3 +80,91 @@ if uploaded_file is not None:
         # Display the best pipeline's graph
         st.subheader("Best Pipeline Graph")
         st.image(automl.best_pipeline.graph(), use_container_width=True)
+///////////////////////////////////////
+
+
+
+
+
+
+
+
+import streamlit as st
+import evalml
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
+
+# Create a Streamlit app
+st.title("AutoML with EvalML")
+
+# Upload a CSV file
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+if uploaded_file is not None:
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(uploaded_file)
+
+    # Display the DataFrame
+    st.write("Uploaded DataFrame:", df)
+
+    # Create a list of columns from the DataFrame
+    columns = df.columns.tolist()
+
+    # Ask the user to select the target column
+    target_column = st.selectbox("Select the target column", columns)
+
+    # Ask the user to select the problem type
+    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
+
+    # Map the problem type to EvalML's problem_type argument
+    problem_type_mapping = {
+        "binary classification": "binary",
+        "multiclass classification": "multiclass",
+        "regression": "regression",
+    }
+    evalml_problem_type = problem_type_mapping[problem_type]
+
+
+    # Add a "Run" button
+    if st.button("Run AutoML"):
+        # Create a progress bar to indicate the training progress
+        progress_bar = st.progress(0)
+
+        # One-hot encode the target column
+        ohe = OneHotEncoder()
+        y = ohe.fit_transform(df[target_column].to_numpy().reshape(-1, 1)).toarray()
+
+        # Split the data into a training set and a validation set
+        X_train, X_test, y_train, y_test = train_test_split(df.drop(columns=[target_column]), y, test_size=0.2)
+
+        # Create a pipeline
+        pipeline = Pipeline([("ohe", ohe)])
+
+        # Run AutoML using EvalML
+        automl = evalml.AutoMLSearch(X_train=X_train, y_train=y_train,problem_type=evalml_problem_type)
+
+        automl.search()
+        st.write(automl.rankings)
+
+        # Get the best pipeline
+        best_pipeline = automl.best_pipeline
+
+        # Fit the best pipeline on the data
+        best_pipeline.fit(X_train=X_train, y_train=y_train)
+
+        # Evaluate the pipeline
+        scores = best_pipeline.score(X=df.to_numpy(), y=y, objectives=["accuracy"])
+
+        # Print the accuracy score
+        st.write(f"Accuracy Score: {scores['Accuracy']}")
+
+        # Display information about the best pipeline
+        st.subheader("Best Pipeline Information")
+        st.write(best_pipeline)
+
+        # Display the best pipeline's graph
+        st.subheader("Best Pipeline Graph")
+        st.image(automl.best_pipeline.graph(), use_container_width=True)
