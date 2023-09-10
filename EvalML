@@ -168,3 +168,135 @@ if uploaded_file is not None:
         # Display the best pipeline's graph
         st.subheader("Best Pipeline Graph")
         st.image(automl.best_pipeline.graph(), use_container_width=True)
+
+////////////////////pycaret/////////////
+
+import streamlit as st
+import pycaret
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+# Create a Streamlit app
+st.title("AutoML with PyCaret")
+
+# Upload a CSV file
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+if uploaded_file is not None:
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(uploaded_file)
+
+    # Display the DataFrame
+    st.write("Uploaded DataFrame:", df)
+
+    # Create a list of columns from the DataFrame
+    columns = df.columns.tolist()
+
+    # Ask the user to select the target column
+    target_column = st.selectbox("Select the target column", columns)
+
+    # Ask the user to select the problem type
+    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
+
+
+    # Add a "Run" button
+    if st.button("Run AutoML"):
+        # Create a progress bar to indicate the training progress
+        progress_bar = st.progress(0)
+
+        # Create a PyCaret classification model
+        classifier = pycaret.classification.setup(
+            data=df, target=target_column, problem_type=problem_type
+        )
+
+        # Run AutoML
+        classifier.automl()
+
+        # Get the best model
+        best_model = classifier.best_model()
+
+        # Evaluate the best model
+        scores = best_model.evaluate()
+
+        # Print the accuracy score
+        st.write(f"Accuracy Score: {scores['accuracy']}")
+
+        # Display information about the best model
+        st.subheader("Best Model Information")
+        st.write(best_model)
+
+        # Display the best model's graph
+        st.subheader("Best Model Graph")
+        st.image(best_model.plot(kind="tree"), use_container_width=True)
+
+
+//////////////////////h20/////
+
+import streamlit as st
+import h2o
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+# Create a Streamlit app
+st.title("AutoML with H2O AutoML")
+
+# Upload a CSV file
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+if uploaded_file is not None:
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(uploaded_file)
+
+    # Display the DataFrame
+    st.write("Uploaded DataFrame:", df)
+
+    # Create a list of columns from the DataFrame
+    columns = df.columns.tolist()
+
+    # Ask the user to select the target column
+    target_column = st.selectbox("Select the target column", columns)
+
+    # Ask the user to select the problem type
+    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
+
+    # Create an H2O cluster
+    h2o.init()
+
+    # Convert the DataFrame to an H2O Frame
+    df_h2o = h2o.import_file(uploaded_file)
+
+    # Set the target column
+    target_column_h2o = df_h2o[target_column]
+
+    # Split the data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(df_h2o, target_column_h2o, test_size=0.2)
+
+    # Run AutoML using H2O AutoML
+    automl = h2o.automl(
+        X=X_train,
+        y=y_train,
+        problem_type=problem_type,
+        seed=1234,
+        nfolds=5,
+    )
+
+    # Get the best model
+    best_model = automl.leaderboard[0]["model"]
+
+    # Evaluate the best model on the test set
+    best_model_performance = best_model.evaluate(X_test, y_test)
+
+    # Print the accuracy score
+    st.write(f"Accuracy Score: {best_model_performance['accuracy']}")
+
+    # Display information about the best model
+    st.subheader("Best Model Information")
+    st.write(best_model)
+
+    # Display the best model's graph
+    st.subheader("Best Model Graph")
+    st.image(best_model.plot(), use_container_width=True)
+
+
