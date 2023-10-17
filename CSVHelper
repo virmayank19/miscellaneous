@@ -1,0 +1,47 @@
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class CSVProcessor {
+    public static void main(String[] args) {
+        String csvInput = "header1,header2,header3\nval11,val12,val13\nval21,val22,val23";
+        String outputDir = "c:\\output";
+        String outputPath = outputDir + "\\csvParameters.txt";
+
+        // Check if the output file already exists and rename it if necessary
+        File outputFile = new File(outputPath);
+        if (outputFile.exists()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            String timestamp = dateFormat.format(new Date());
+            String newOutputPath = outputPath.replace(".txt", "_" + timestamp + ".txt");
+            outputFile.renameTo(new File(newOutputPath));
+        }
+
+        try {
+            FileWriter writer = new FileWriter(outputPath);
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+            // Split the input CSV string into rows
+            String[] csvRows = csvInput.split("\n");
+
+            for (int i = 0; i < csvRows.length; i++) {
+                String row = csvRows[i];
+                String rowNumber = "row" + (i + 1);
+
+                // Write the "folderNumber" column and the rest of the columns to the output file
+                if (i == 0) {
+                    // If it's the header row, add "rowNumber" before the headers
+                    bufferedWriter.write("rowNumber," + row + "\n");
+                } else {
+                    // For data rows, add row number before the data values
+                    bufferedWriter.write(rowNumber + "," + row + "\n");
+                }
+            }
+
+            bufferedWriter.close();
+            System.out.println("CSV file created at " + outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
