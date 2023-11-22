@@ -1,0 +1,17 @@
+Reducing vulnerabilities 
+
+Description:
+This initiative aims to achieve the following:
+
+Review all project dependencies.
+Simplify maintenance and future updates by removing unnecessary dependencies.
+Upgrade vulnerable libraries to mitigate potential security risks and performance issues.
+
+Outcome:
+
+Identified and reviewed all existing project dependencies
+
+Removed/upgraded 8-9 vulnerable dependencies to their most recent and secure versions.
+
+One particular dependency, birt-runtime, presented a unique challenge due to its unavailability on Maven Central. To overcome this obstacle, I took the initiative to create a custom project and automate the process of making birt a Maven dependency.Created a dedicated project and automated solution to make a birt-runtime project from BIRT SDK. 
+The automated process will make future upgrades easy and straightforward for the BIRT Runtime.
