@@ -15,3 +15,17 @@ Removed/upgraded 8-9 vulnerable dependencies to their most recent and secure ver
 
 One particular dependency, birt-runtime, presented a unique challenge due to its unavailability on Maven Central. To overcome this obstacle, I took the initiative to create a custom project and automate the process of making birt a Maven dependency.Created a dedicated project and automated solution to make a birt-runtime project from BIRT SDK. 
 The automated process will make future upgrades easy and straightforward for the BIRT Runtime.
+
+
+
+
+Description:
+
+This initiative aims to explore and implement various ML/AI functionalities that can enhance the capabilities and value of our project. The goal is to identify potential applications of ML/AI, develop proof-of-concept (POC) implementations, and share learnings with the team to foster a culture of continuous innovation.
+
+Outcome:
+Conducted thorough research and brainstorming sessions to identify promising ML/AI functionalities that align with project goals and user needs.
+Developed POCs for two impactful ML/AI functionalities:
+Key Influencers: Inspired by PowerBI's functionality, I reverse engineered the approach and implemented a demo that effectively identifies key influencers within a given dataset.
+Simulation Capabilities: Utilizing various mathematical and statistical models, I created a demo that predicts future data trends based on large datasets.
+Conducted a knowledge-sharing session for the team to disseminate my learnings and insights on ML/AI applications, fostering a collaborative environment for future exploration.
