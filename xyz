@@ -1,18 +1,1 @@
-# Filtering Schedules
 
-You can filter the schedules based on two criteria: report name and output file name.
-
-**Filtering by Report Name**
-
-1. Click on the "Report Name" drop-down menu.
-2. Select the report definition you want to filter on.
-3. Click "OK".
-
-The list of schedules will be refreshed, and only schedules that use the selected report definition will be displayed.
-
-**Filtering by Output File Name**
-
-1. The "Output File" list displays all the output file names that are produced by executing reports in the system.
-2. Select the output file(s) you want to filter on.
-
-The schedules list view will be refreshed, and only schedules that contain report definitions that produce reports with the selected output file name will be displayed.
