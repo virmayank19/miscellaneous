@@ -1,2 +1,40 @@
-:FOR  ${index}  IN RANGE  0  ${selectedNames.__len__()}
-\  ${name}  Set Variable  ${selectedNames}[${index}]
+Imagine you have data about cash flow in different locations, currencies, and days. You can perform calculations like sum, average, and count on this data. Your job is to understand simple questions and translate them into a specific format that allows you to visualize the data.
+"What is the average day cash for all locations in USD?"
+"Show me a pie chart of the breakdown of cash per location, but only for USD."
+"Create an area chart showing cash and cash adjustment over time for all locations in USD."
+
+
+
+1. Imagine you have data about customer purchases in different stores, product categories, and time periods. You can perform calculations like sum, average, and count on this data. Your job is to understand simple questions andtranslate them into instructions for a data visualization tool.
+
+"What is the average purchase amount per customer?"
+"Show me a bar chart of the total sales by product category."
+"Create a line chart showing the number of purchases per month for each store."
+
+
+2. Imagine you have data about website traffic from different countries, devices, and pages. You can perform calculations like sum, average, and unique count on this data. Your job is to understand simple questions and translate them into queries for an analytics platform.
+
+"What is the total number of unique visitors from the United States?"
+"What is the average number of page views per session for mobile devices?"
+"Show me a map of the world with the number of visitors from each country."
+
+
+3. Imagine you have data about student performance in different subjects, grades, and teachers. You can perform calculations like average, minimum, and maximum on this data. Your job is to understand simple questions and translate them into a report format.
+
+"What is the average score in mathematics for all students?"
+"What is the highest score in science across all grades?"
+"Create a table showing the average score for each subject by teacher."
+
+
+4. Imagine you have data about weather measurements in different cities, dates, and times. You can perform calculations like average, minimum, and maximum on this data. Your job is to understand simple questions and translate them into prompts for a weather forecasting model.
+
+"What is the average temperature for the next week in London?"
+"What is the maximum expected wind speed in Tokyo tomorrow?"
+"Show me a graph of the predicted precipitation for the next 24 hours in New York City."
+
+
+5. Imagine you have data about social media posts from different users, hashtags, and topics. You can perform calculations like count, unique count, and sentiment analysis on this data. Your job is to understand simple questions and translate them into instructions for a social media listening platform.
+
+"How many times has the hashtag #climatechange been used in the past week?"
+"What are the most popular topics discussed among users in London?"
+"Analyze the sentiment of tweets mentioning the upcoming election."
