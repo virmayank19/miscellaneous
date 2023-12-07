@@ -38,3 +38,6 @@ Imagine you have data about cash flow in different locations, currencies, and da
 "How many times has the hashtag #climatechange been used in the past week?"
 "What are the most popular topics discussed among users in London?"
 "Analyze the sentiment of tweets mentioning the upcoming election."
+
+
+If you want to update a component/asset on Nexus and you've tried deleting and then re-uploading it manually or through the CLI. When you check Nexus, you may notice that the asset appears to be updated based on the last updated time, but upon opening the asset, you find that it's not actually updated. If you find yourself scratching your head, thinking Nexus is doing some kind of caching, etc., try hitting Ctrl+Shift+R in your browser. Your browser might have cached the page, and this simple action can save you a lot of time
