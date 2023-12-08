@@ -38,3 +38,68 @@ Imagine you have data about cash flow in different locations, currencies, and da
 "How many times has the hashtag #climatechange been used in the past week?"
 "What are the most popular topics discussed among users in London?"
 "Analyze the sentiment of tweets mentioning the upcoming election."
+
+
+
+
+
+
+## Prompt 1: E-commerce Orders
+
+**Context:**
+Imagine you have a dataset containing details of all orders placed on an e-commerce platform. You can analyze information like order date, product purchased, customer location, and total amount spent. You can perform calculations like sum, average, median, and percentage.
+
+**User Prompts:**
+1. What is the total revenue generated in the past month?
+2. What is the average order value for customers in California?
+3. Find the most popular product purchased by users from New York City.
+4. Calculate the percentage of orders that resulted in returns.
+5. Generate a chart showing the distribution of order amounts across different customer segments.
+
+## Prompt 2: Social Media Engagement
+
+**Context:**
+Imagine you have access to social media analytics for various platforms like Twitter, Facebook, and Instagram. You can analyze data like post reach, engagement rate, sentiment analysis, and audience demographics. You can perform calculations like sum, average, percentage, and trend analysis.
+
+**User Prompts:**
+1. What is the total number of likes our latest post received across all platforms?
+2. Calculate the average engagement rate for our Instagram posts in the past week.
+3. Analyze the sentiment of comments received on our Facebook post about product launch.
+4. Identify the top 5 countries where our Twitter followers reside.
+5. Create a graph showing the trend of our social media follower count over the past year.
+
+## Prompt 3: Restaurant Customer Reviews
+
+**Context:**
+Imagine you have access to a database containing customer reviews for restaurants listed on a food delivery platform. You can analyze information like review rating, text content, and customer demographics. You can perform calculations like average rating, sentiment analysis, and keyword extraction.
+
+**User Prompts:**
+1. What is the average rating for restaurants serving Italian cuisine?
+2. Identify the most common keywords used in positive reviews of sushi restaurants.
+3. Analyze the sentiment of reviews for vegetarian restaurants in a specific city.
+4. Find the most popular dishes mentioned in reviews for restaurants with a rating of 4.5 stars or higher.
+5. Generate a word cloud representing the most frequently used words in negative reviews.
+
+## Prompt 4: Music Streaming Trends
+
+**Context:**
+Imagine you have access to streaming data from a music platform, including information like song plays, user demographics, and genre preferences. You can analyze data like top played songs, most popular artists, and listening trends by time and location. You can perform calculations like sum, average, and percentage.
+
+**User Prompts:**
+1. Which song has been played the most times by users in the United Kingdom?
+2. Calculate the average number of songs listened to per user in the past month.
+3. Identify the top 3 most popular genres among users under the age of 25.
+4. Analyze the listening trends for classical music during the morning hours.
+5. Generate a chart showing the top 10 artists by total play count in each genre.
+
+## Prompt 5: Fitness App Activity Data
+
+**Context:**
+Imagine you have access to activity data from a fitness app, including information like steps taken, calories burned, workout duration, and activity type. You can analyze data like daily activity levels, workout trends, and progress over time. You can perform calculations like sum, average, percentage, and goal completion rate.
+
+**User Prompts:**
+1. What is the average number of steps taken by users per day this week?
+2. Identify the most popular workout type among users who have completed their monthly fitness goals.
+3. Calculate the percentage of users who meet their daily calorie burn target.
+4. Analyze the trend of users' weekly activity levels over the past three months.
+5. Generate a chart showing the distribution of workout durations for different activity types.
