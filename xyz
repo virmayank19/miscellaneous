@@ -63,3 +63,15 @@ decoded_text = tokenizer.decode(generated_text[0], skip_special_tokens=True)
 
 # Print the generated text
 print(decoded_text)
+
+
+
+
+
+
+
+i [Team Member's Name],
+
+Hope this message finds you well. We've successfully developed the functionality you requested. Would you be available for a brief 30-minute demo and feedback session? Could we schedule it either today or tomorrow at your convenience?
+
+Looking forward to your insights
