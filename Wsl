@@ -25,3 +25,35 @@
 
 
 
+
+
+Step 1: Parse the natural language query.
+Step 2: Check the value of the "chart type" field in the query.
+Step 3: If chart type is equal to "Single Value", create the JSON object as follows:
+	{
+  	"chart type": "Single Value",
+ 	 "field name": <value from the field name in the query>,
+ 	 "aggregation applied": <value from the aggregation applied in the query>,
+  	"filter criteria": {
+    	"field_name": <value from filter criteria field_name in the query>,
+    	"operator": <value from filter criteria operator in the query>,
+    	"value": <value from filter criteria value in the query>
+ 	 }
+	}
+
+Step 4: If chart type is not equal to "Single Value", create the JSON object as follows:
+	{
+  	"chart type": <value from chart type in the query>,
+  	"x axis": <value from x axis in the query>,
+  	"y axis": {
+    		"field name": <value from y axis field name in the query>,
+    		"aggregation applied": <value from y axis aggregation applied in the query>
+  	},
+  	"filter criteria": {
+    		"field name": <value from filter criteria field name in the query>,
+    		"operator": <value from filter criteria operator in the query>,
+    		"value": <value from filter criteria value in the query>
+  	}
+	}
+Step 5: Ensure that aggregation applied values are from (average, count, sum, unique, min, max).
+Step 6: If any required field is missing or has an invalid value, output "Can't perform computation on the query".
