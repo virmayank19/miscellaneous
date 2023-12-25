@@ -1,23 +1,27 @@
-Subject: Urgent: Team Blocked Due to WSL Netscape CA Signed Certificate Errors in Docker Containers
+1. Receive the natural language query
+2. Parse the query into the following fields:
+	"chart type": (to be filled with the extracted chart type)
+	"field name": (to be filled with the extracted field name)
+	"aggregation applied": (to be filled with the extracted aggregation)
+	"filter criteria": (a JSON object to be filled with any extracted filter criteria).
+3. Validate the extracted information:
+	Ensure the chart type is valid (Single Value or another supported type).
+	Ensure the aggregation applied is one of the allowed values.
+4. Construct the JSON object based on the extracted information:
+	If chart type is "Single Value":
+		Create a JSON object with keys:
+			"chart type": "Single Value"
+			"field name": (the field to be visualized)
+			"aggregation applied": (the aggregation to be applied)
+			"filter criteria": (a JSON object containing any filter criteria)
+	If chart type is not "Single Value":
+		Create a JSON object with keys:
+			"chart type": (the specified chart type)
+			"x axis": (the field for the x-axis)
+			"y axis": (a JSON object containing the field for the y-axis and the aggregation to be applied)
+			"filter criteria": (a JSON object containing any filter criteria)
+5. Output the constructed JSON object.
+6. If unable to create the JSON object due to invalid or incomplete information, output "Can't perform computation on the query".
 
-Dear [Recipient's Name],
 
-I hope this email finds you well. I am writing to bring to your attention a critical issue that our team is currently facing, resulting in a complete blockage of our work.
 
-The Problem:
-We are experiencing significant difficulties accessing HTTPS connections within Docker containers on Windows Subsystem for Linux (WSL). The root cause of this issue is related to Netscape CA signed certificate errors, which are hindering our ability to proceed with our tasks. As a result, the entire team is unable to make progress on their respective projects.
-
-Request for Action:
-In light of the urgency and severity of this matter, we kindly request your assistance in resolving this issue promptly. We propose two potential solutions:
-
-Disable the Netscape Client:
-If it is feasible and does not introduce any security risks, disabling the Netscape client could be a quick and effective workaround. This would allow the team to resume work without further delays.
-
-Provide a Universal Solution for Docker Images:
-Alternatively, we are open to any guidance or solution that would work universally across all Docker images. This could involve configuration changes, updates, or any other measures that address the Netscape CA signed certificate errors consistently.
-
-We understand the importance of maintaining a secure environment, and we appreciate your efforts to ensure the integrity of our systems. However, finding a swift resolution to this matter is crucial to the continuity of our projects.
-
-Please let us know at your earliest convenience if you require any additional information or if there are specific steps we can take to assist in resolving this issue. We are eager to collaborate with you to implement a solution that allows us to resume our work promptly.
-
-Thank you for your immediate attention to this matter. We look forward to your guidance and assistance in overcoming this challenge.
