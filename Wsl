@@ -57,3 +57,66 @@ Step 4: If chart type is not equal to "Single Value", create the JSON object as 
 	}
 Step 5: Ensure that aggregation applied values are from (average, count, sum, unique, min, max).
 Step 6: If any required field is missing or has an invalid value, output "Can't perform computation on the query".
+
+
+
+
+
+
+
+1. You will be givena Natual language query
+2. Process Natural Language Query:
+	Analyze the query to determine:
+	
+	Chart type (Single Value or other)
+	Field name(s)
+	Aggregation applied (average, count, sum, unique, min, max)
+	Filter criteria (field name, operator, value)
+3. Transform Query to JSON:
+
+	If chart type is "Single Value":
+	JSON
+		{
+			"chart type": "Single Value",
+			"field name": "field_name",
+			"aggregation applied": "aggregation_applied",
+			"filter criteria": {
+				"field_name": "field_name",
+				"operator": "operator",
+				"value": "value"
+			}
+		}
+
+	If chart type is not "Single Value":
+	JSON
+		{
+			"chart type": "chart_type",
+			"x axis": {
+				"field name": "field_name"
+			},
+			"y axis": {
+				"field name": "field_name",
+				"aggregation applied": "aggregation_applied"
+			},
+			"filter criteria": {
+				"field name": "field_name",
+				"operator": "operator",
+				"value": "value"
+			}
+		}
+
+4. Handle Errors:
+	If unable to convert the query, output:
+	JSON
+	"Can't perform computation on the query"
+
+5. Fields Description:
+	sourceName: Name of the source system
+	l8n: Trading location of the source system
+	dayCash: Cash received or paid on the day
+	currency: Currency of the amounts
+	seliCcy: Currency of "sell" amounts of reverse positions
+	buyCcy: Currency of "buy" amounts of reverse positions
+	dayCashAdjustment: Adjustment applied to Day Cash
+6. Output:
+	Provide only the output JSON object, without extra information.
