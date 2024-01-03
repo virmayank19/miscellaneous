@@ -1,77 +1,13 @@
+mvn install:install-file -Dfile=target/your-artifact-4.jar -DgroupId=org.test -DartifactId=org.test.artifact -Dversion=4 -Dpackaging=jar
 
-import transformers
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-
-# Download the LLaMA 2 7B model
-model_name = "facebook/llama-2-7b"
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
-# Download the tokenizer
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-# System prompt to provide context or instructions
-system_prompt = "Please provide some context or instructions for the task:\n"
-print(system_prompt)
-
-# User input for system prompt
-user_system_prompt = input()
-
-# Combine system prompt and user input
-combined_prompt = system_prompt + user_system_prompt
-
-# Prompt the user for input text
-user_prompt = input("\n\nEnter your prompt: ")
-
-# Combine system prompt and user prompt
-full_prompt = combined_prompt + user_prompt
-
-# Encode the full prompt
-encoded_prompt = tokenizer(full_prompt, return_tensors="pt")
-
-# Generate text using the LLaMA 2 7B model
-generated_text = model.generate(**encoded_prompt)
-
-# Decode the generated text
-decoded_text = tokenizer.decode(generated_text[0], skip_special_tokens=True)
-
-# Print the generated text
-print("\n\nGenerated text:\n", decoded_text)
+<project>
+    <distributionManagement>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${project.basedir}/local-repo</url>
+        </repository>
+    </distributionManagement>
+    </project>
 
 
-
-import transformers
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-
-# Download the LLaMA 2 7B model
-model_name = "facebook/llama-2-7b"
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
-# Download the tokenizer
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-# Prompt the user for input text
-user_prompt = input("Enter your prompt: ")
-
-# Encode the user's prompt
-encoded_prompt = tokenizer(user_prompt, return_tensors="pt")
-
-# Generate text using the LLaMA 2 7B model
-generated_text = model.generate(**encoded_prompt)
-
-# Decode the generated text
-decoded_text = tokenizer.decode(generated_text[0], skip_special_tokens=True)
-
-# Print the generated text
-print(decoded_text)
-
-
-
-
-
-
-
-i [Team Member's Name],
-
-Hope this message finds you well. We've successfully developed the functionality you requested. Would you be available for a brief 30-minute demo and feedback session? Could we schedule it either today or tomorrow at your convenience?
-
-Looking forward to your insights
+mvn deploy -DaltDeploymentRepository=local::default::file://${project.basedir}/local-repo
