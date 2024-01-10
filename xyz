@@ -1,13 +1,25 @@
-mvn install:install-file -Dfile=target/your-artifact-4.jar -DgroupId=org.test -DartifactId=org.test.artifact -Dversion=4 -Dpackaging=jar
+import json
 
-<project>
-    <distributionManagement>
-        <repository>
-            <id>local-repo</id>
-            <url>file://${project.basedir}/local-repo</url>
-        </repository>
-    </distributionManagement>
-    </project>
+def parse_json(data):
+  """
+  Parses a JSON object and returns a dictionary containing the "name": "description" pairs for each object in the list.
 
+  Args:
+      data: A JSON object.
 
-mvn deploy -DaltDeploymentRepository=local::default::file://${project.basedir}/local-repo
+  Returns:
+      A dictionary containing the "name": "description" pairs for each object in the list.
+  """
+  result = {}
+  for item in data:
+    result[item["name"]] = item["description"]
+  return result
+
+# Example usage
+with open("input.json") as f:
+  data = json.load(f)
+
+parsed_data = parse_json(data)
+
+for key, value in parsed_data.items():
+  print(f"{key}: {value}")
