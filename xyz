@@ -1,25 +1,33 @@
-import json
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from nmslib import Nmslib
 
-def parse_json(data):
-  """
-  Parses a JSON object and returns a dictionary containing the "name": "description" pairs for each object in the list.
+# Sample data
+data = {
+    "SourceName": "name of the Source system",
+    "L8n": "trading location of the Source system",
+    "Currency": "Currency in which the amount of the position is denoted"
+}
 
-  Args:
-      data: A JSON object.
+# Embedding model
+model = SentenceTransformer('all-mpnet-base-v2')
 
-  Returns:
-      A dictionary containing the "name": "description" pairs for each object in the list.
-  """
-  result = {}
-  for item in data:
-    result[item["name"]] = item["description"]
-  return result
+# Create embeddings for field descriptions
+embeddings = model.encode(list(data.values()))
+
+# Indexing for efficient search
+index = Nmslib(space='cosinesimil')
+index.addDataPointBatch(embeddings)
+index.createIndex({'post': 2}, print_progress=True)  # Adjust parameters for best performance
+
+def vector_search(query):
+    """Performs vector search and returns the most similar field name."""
+    query_embedding = model.encode([query])[0]
+    results = index.knnQuery(query_embedding, k=1)  # Find the closest match
+    closest_index = results[0][0]
+    return list(data.keys())[closest_index]
 
 # Example usage
-with open("input.json") as f:
-  data = json.load(f)
-
-parsed_data = parse_json(data)
-
-for key, value in parsed_data.items():
-  print(f"{key}: {value}")
+query = "location"
+result = vector_search(query)
+print("Most relevant field for '{}': {}".format(query, result))
