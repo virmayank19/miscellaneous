@@ -1,75 +1,42 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from annoy import AnnoyIndex
-
-# Load data
-data = {
-    "SourceName": "name of the Source system",
-    "L8n": "trading location of the Source system",
-    "Currency": "Currency in which the amount of the position is denoted",
-}
+from data_definitions import data
 
 # Create text embeddings
 model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
 embeddings = model.encode(list(data.values()))
 
 # Build vector index
-f = 100  # Adjust for dimensionality of embeddings
+f = 768  # Dimensionality of the embeddings from the 'all-mpnet-base-v2' model
 t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
 for i, embedding in enumerate(embeddings):
     t.add_item(i, embedding)
-t.build(10)  # Adjust number of trees for performance
+t.build(10)  # Adjust the number of trees for performance
 
-def vector_search(query):
+def vector_search(query, top_k=5):
     query_embedding = model.encode([query])[0]
-    nns = t.get_nns_by_vector(query_embedding, 1, include_distances=True)
-    nearest_field = list(data.keys())[nns[0][0]]
-    return nearest_field
+    nns = t.get_nns_by_vector(query_embedding, top_k, include_distances=True)
+    
+    results = []
+    for idx, distance in zip(nns[0], nns[1]):
+        field_name = list(data.keys())[idx]
+        results.append((field_name, distance))
+    
+    return results
 
 # Example usage
 query = "location"
-result = vector_search(query)
-print(result)  # Output: L8n
+results = vector_search(query, top_k=5)
+print("Top 5 matching results for '{}':".format(query))
+for result in results:
+    print(result[0], " - Distance:", result[1])
 
 query = "currency"
-result = vector_search(query)
-print(result)  # Output: Currency
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from annoy import AnnoyIndex
-
-# Load data
-data = {
-    "SourceName": "name of the Source system",
-    "L8n": "trading location of the Source system",
-    "Currency": "Currency in which the amount of the position is denoted",
-}
-
-# Create text embeddings
-model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
-embeddings = model.encode(list(data.values()))
-
-# Build vector index
-f = 100  # Adjust for dimensionality of embeddings
-t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
-for i, embedding in enumerate(embeddings):
-    t.add_item(i, embedding)
-t.build(10)  # Adjust number of trees for performance
-
-def vector_search(query):
-    query_embedding = model.encode([query])[0]
-    nns = t.get_nns_by_vector(query_embedding, 1, include_distances=True)
-    nearest_field = list(data.keys())[nns[0][0]]
-    return nearest_field
-
-# Example usage
-query = "location"
-result = vector_search(query)
-print(result)  # Output: L8n
-
-query = "currency"
-result = vector_search(query)
-print(result)  # Output: Currency
+results = vector_search(query, top_k=5)
+print("\nTop 5 matching results for '{}':".format(query))
+for result in results:
+    print(result[0], " - Distance:", result[1])
 
 
 
