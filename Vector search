@@ -1,0 +1,105 @@
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from annoy import AnnoyIndex
+
+# Load data
+data = {
+    "SourceName": "name of the Source system",
+    "L8n": "trading location of the Source system",
+    "Currency": "Currency in which the amount of the position is denoted",
+}
+
+# Create text embeddings
+model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
+embeddings = model.encode(list(data.values()))
+
+# Build vector index
+f = 100  # Adjust for dimensionality of embeddings
+t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
+for i, embedding in enumerate(embeddings):
+    t.add_item(i, embedding)
+t.build(10)  # Adjust number of trees for performance
+
+def vector_search(query):
+    query_embedding = model.encode([query])[0]
+    nns = t.get_nns_by_vector(query_embedding, 1, include_distances=True)
+    nearest_field = list(data.keys())[nns[0][0]]
+    return nearest_field
+
+# Example usage
+query = "location"
+result = vector_search(query)
+print(result)  # Output: L8n
+
+query = "currency"
+result = vector_search(query)
+print(result)  # Output: Currency
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from annoy import AnnoyIndex
+
+# Load data
+data = {
+    "SourceName": "name of the Source system",
+    "L8n": "trading location of the Source system",
+    "Currency": "Currency in which the amount of the position is denoted",
+}
+
+# Create text embeddings
+model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
+embeddings = model.encode(list(data.values()))
+
+# Build vector index
+f = 100  # Adjust for dimensionality of embeddings
+t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
+for i, embedding in enumerate(embeddings):
+    t.add_item(i, embedding)
+t.build(10)  # Adjust number of trees for performance
+
+def vector_search(query):
+    query_embedding = model.encode([query])[0]
+    nns = t.get_nns_by_vector(query_embedding, 1, include_distances=True)
+    nearest_field = list(data.keys())[nns[0][0]]
+    return nearest_field
+
+# Example usage
+query = "location"
+result = vector_search(query)
+print(result)  # Output: L8n
+
+query = "currency"
+result = vector_search(query)
+print(result)  # Output: Currency
+
+
+
+
+
+import spacy
+
+# Load the pre-trained word embeddings model from spaCy
+nlp = spacy.load("en_core_web_md")
+
+# Sample data with field names and descriptions
+data = {
+    "FieldName": "description",
+    "SourceName": "name of the Source system",
+    "L8n": "trading location of the Source system",
+    "Currency": "Currency in which the amount of the position is denoted."
+}
+
+# Function to get the most relevant field based on user input
+def vector_search(user_input):
+    # Calculate the similarity between user input and each field description
+    similarities = {field: nlp(user_input).similarity(nlp(description)) for field, description in data.items()}
+    
+    # Get the field with the highest similarity
+    most_relevant_field = max(similarities, key=similarities.get)
+    
+    return most_relevant_field
+
+# Example usage
+user_input = input("Enter your query: ")
+result = vector_search(user_input)
+
+print(f"The most relevant field for '{user_input}' is: {result}")
