@@ -300,3 +300,77 @@ if uploaded_file is not None:
     st.image(best_model.plot(), use_container_width=True)
 
 
+
+
+
+
+
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load your CSV data
+file_path = 'your_data.csv'
+data = pd.read_csv(file_path)
+
+# Function to create Single Value chart
+def create_single_value_chart(query):
+    field_name = query["field name"]
+    aggregation_applied = query["aggregation applied"]
+    filter_criteria = query["filter criteria"]
+
+    filtered_data = data[data[filter_criteria["field name"]].apply(lambda x: eval(f'x {filter_criteria["operator"]} {filter_criteria["value"]}'))]
+    result = filtered_data[field_name].agg(aggregation_applied)
+
+    # Plotting
+    plt.figure(figsize=(6, 4))
+    plt.bar(["Result"], [result])
+    plt.title("Single Value Chart")
+    st.pyplot()
+
+# Function to create other charts
+def create_chart(query):
+    chart_type = query["chart type"]
+    x_axis = query["x axis"]
+    y_axis = query["y axis"]
+    filter_criteria = query["filter criteria"]
+
+    filtered_data = data[data[filter_criteria["field name"]].apply(lambda x: eval(f'x {filter_criteria["operator"]} {filter_criteria["value"]}'))]
+
+    # Plotting
+    plt.figure(figsize=(8, 6))
+
+    if chart_type == "bar chart":
+        plt.bar(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
+    elif chart_type == "area chart":
+        plt.fill_between(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
+    elif chart_type == "line chart":
+        plt.plot(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
+    elif chart_type == "pie chart":
+        plt.pie(filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]), labels=filtered_data[x_axis])
+
+    plt.title(f"{chart_type.capitalize()} Chart")
+    plt.xlabel(x_axis)
+    plt.ylabel(f"{y_axis['aggregation applied']}({y_axis['field name']})")
+    st.pyplot()
+
+# Streamlit UI
+st.title("Chart Generator")
+
+# Get JSON input from the user
+json_input = st.text_area("Enter JSON input:")
+try:
+    query = eval(json_input)  # Convert string to dictionary
+except:
+    st.error("Invalid JSON input. Please enter a valid JSON.")
+    query = None
+
+# Generate chart based on the input
+if query:
+    st.subheader("Generated Chart:")
+    if query["chart type"] == "Single Value":
+        create_single_value_chart(query)
+    else:
+        create_chart(query)
+
+
