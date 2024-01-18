@@ -1,308 +1,3 @@
-import streamlit as st
-import evalml
-import pandas as pd
-import numpy as np
-
-# Create a Streamlit app
-st.title("AutoML with EvalML")
-
-# Upload a CSV file
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
-if uploaded_file is not None:
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(uploaded_file)
-
-    # Display the DataFrame
-    st.write("Uploaded DataFrame:", df)
-
-    # Create a list of columns from the DataFrame
-    columns = df.columns.tolist()
-
-    # Ask the user to select the target column
-    target_column = st.selectbox("Select the target column", columns)
-
-    # Specify the target column
-    df, y = df.drop(columns=[target_column]), df[target_column]
-
-    # Ask the user to select the problem type
-    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
-
-    # Map the problem type to EvalML's problem_type argument
-    problem_type_mapping = {
-        "binary classification": "binary",
-        "multiclass classification": "multiclass",
-        "regression": "regression",
-    }
-    evalml_problem_type = problem_type_mapping[problem_type]
-
-    # Convert y to a 1D numpy array
-    y = np.array(y)
-
-    # Add a "Run" button
-    if st.button("Run AutoML"):
-        # Create a progress bar to indicate the training progress
-        progress_bar = st.progress(0)
-
-        # Convert DataFrame to NumPy arrays for X_train and y_train
-        X_train = df.to_numpy()
-        y_train = y
-
-        # Run AutoML using EvalML
-        automl = evalml.AutoMLSearch(
-            problem_type=evalml_problem_type,
-            objective="auto",  # Auto-detect the appropriate objective
-            max_batches=1,
-            n_jobs=-1,
-            verbose=True,
-            random_seed=42,
-        )
-
-        # Search for the best pipeline
-        automl.search(X_train=X_train, y_train=y_train, show_progress_bars=True, progress_bar=progress_bar)
-
-        # Get the best pipeline
-        best_pipeline = automl.best_pipeline
-
-        # Fit the best pipeline on the data
-        best_pipeline.fit(X_train=X_train, y_train=y_train)
-
-        # Evaluate the pipeline
-        scores = best_pipeline.score(X=df.to_numpy(), y=y, objectives=["accuracy"])
-
-        # Print the accuracy score
-        st.write(f"Accuracy Score: {scores['Accuracy']}")
-
-        # Display information about the best pipeline
-        st.subheader("Best Pipeline Information")
-        st.write(best_pipeline)
-
-        # Display the best pipeline's graph
-        st.subheader("Best Pipeline Graph")
-        st.image(automl.best_pipeline.graph(), use_container_width=True)
-///////////////////////////////////////
-
-
-
-
-
-
-
-
-import streamlit as st
-import evalml
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-
-# Create a Streamlit app
-st.title("AutoML with EvalML")
-
-# Upload a CSV file
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
-if uploaded_file is not None:
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(uploaded_file)
-
-    # Display the DataFrame
-    st.write("Uploaded DataFrame:", df)
-
-    # Create a list of columns from the DataFrame
-    columns = df.columns.tolist()
-
-    # Ask the user to select the target column
-    target_column = st.selectbox("Select the target column", columns)
-
-    # Ask the user to select the problem type
-    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
-
-    # Map the problem type to EvalML's problem_type argument
-    problem_type_mapping = {
-        "binary classification": "binary",
-        "multiclass classification": "multiclass",
-        "regression": "regression",
-    }
-    evalml_problem_type = problem_type_mapping[problem_type]
-
-
-    # Add a "Run" button
-    if st.button("Run AutoML"):
-        # Create a progress bar to indicate the training progress
-        progress_bar = st.progress(0)
-
-        # One-hot encode the target column
-        ohe = OneHotEncoder()
-        y = ohe.fit_transform(df[target_column].to_numpy().reshape(-1, 1)).toarray()
-
-        # Split the data into a training set and a validation set
-        X_train, X_test, y_train, y_test = train_test_split(df.drop(columns=[target_column]), y, test_size=0.2)
-
-        # Create a pipeline
-        pipeline = Pipeline([("ohe", ohe)])
-
-        # Run AutoML using EvalML
-        automl = evalml.AutoMLSearch(X_train=X_train, y_train=y_train,problem_type=evalml_problem_type)
-
-        automl.search()
-        st.write(automl.rankings)
-
-        # Get the best pipeline
-        best_pipeline = automl.best_pipeline
-
-        # Fit the best pipeline on the data
-        best_pipeline.fit(X_train=X_train, y_train=y_train)
-
-        # Evaluate the pipeline
-        scores = best_pipeline.score(X=df.to_numpy(), y=y, objectives=["accuracy"])
-
-        # Print the accuracy score
-        st.write(f"Accuracy Score: {scores['Accuracy']}")
-
-        # Display information about the best pipeline
-        st.subheader("Best Pipeline Information")
-        st.write(best_pipeline)
-
-        # Display the best pipeline's graph
-        st.subheader("Best Pipeline Graph")
-        st.image(automl.best_pipeline.graph(), use_container_width=True)
-
-////////////////////pycaret/////////////
-
-import streamlit as st
-import pycaret
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-
-# Create a Streamlit app
-st.title("AutoML with PyCaret")
-
-# Upload a CSV file
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
-if uploaded_file is not None:
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(uploaded_file)
-
-    # Display the DataFrame
-    st.write("Uploaded DataFrame:", df)
-
-    # Create a list of columns from the DataFrame
-    columns = df.columns.tolist()
-
-    # Ask the user to select the target column
-    target_column = st.selectbox("Select the target column", columns)
-
-    # Ask the user to select the problem type
-    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
-
-
-    # Add a "Run" button
-    if st.button("Run AutoML"):
-        # Create a progress bar to indicate the training progress
-        progress_bar = st.progress(0)
-
-        # Create a PyCaret classification model
-        classifier = pycaret.classification.setup(
-            data=df, target=target_column, problem_type=problem_type
-        )
-
-        # Run AutoML
-        classifier.automl()
-
-        # Get the best model
-        best_model = classifier.best_model()
-
-        # Evaluate the best model
-        scores = best_model.evaluate()
-
-        # Print the accuracy score
-        st.write(f"Accuracy Score: {scores['accuracy']}")
-
-        # Display information about the best model
-        st.subheader("Best Model Information")
-        st.write(best_model)
-
-        # Display the best model's graph
-        st.subheader("Best Model Graph")
-        st.image(best_model.plot(kind="tree"), use_container_width=True)
-
-
-//////////////////////h20/////
-
-import streamlit as st
-import h2o
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-
-# Create a Streamlit app
-st.title("AutoML with H2O AutoML")
-
-# Upload a CSV file
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
-if uploaded_file is not None:
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(uploaded_file)
-
-    # Display the DataFrame
-    st.write("Uploaded DataFrame:", df)
-
-    # Create a list of columns from the DataFrame
-    columns = df.columns.tolist()
-
-    # Ask the user to select the target column
-    target_column = st.selectbox("Select the target column", columns)
-
-    # Ask the user to select the problem type
-    problem_type = st.selectbox("Select the problem type", ["binary classification", "multiclass classification", "regression"])
-
-    # Create an H2O cluster
-    h2o.init()
-
-    # Convert the DataFrame to an H2O Frame
-    df_h2o = h2o.import_file(uploaded_file)
-
-    # Set the target column
-    target_column_h2o = df_h2o[target_column]
-
-    # Split the data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(df_h2o, target_column_h2o, test_size=0.2)
-
-    # Run AutoML using H2O AutoML
-    automl = h2o.automl(
-        X=X_train,
-        y=y_train,
-        problem_type=problem_type,
-        seed=1234,
-        nfolds=5,
-    )
-
-    # Get the best model
-    best_model = automl.leaderboard[0]["model"]
-
-    # Evaluate the best model on the test set
-    best_model_performance = best_model.evaluate(X_test, y_test)
-
-    # Print the accuracy score
-    st.write(f"Accuracy Score: {best_model_performance['accuracy']}")
-
-    # Display information about the best model
-    st.subheader("Best Model Information")
-    st.write(best_model)
-
-    # Display the best model's graph
-    st.subheader("Best Model Graph")
-    st.image(best_model.plot(), use_container_width=True)
-
-
-
-
-
 
 
 import streamlit as st
@@ -373,4 +68,82 @@ if query:
     else:
         create_chart(query)
 
+
+
+
+
+import streamlit as st
+import pandas as pd
+import altair as alt
+
+# Load the CSV data
+data = pd.read_csv("data.csv")
+
+# Get JSON input from the user
+json_input = st.text_area("Enter JSON input:")
+
+# Function to create the chart based on JSON specifications
+def create_chart(json_input):
+    chart_specs = json.loads(json_input)
+
+    # Handle Single Value chart
+    if chart_specs["chart type"] == "Single Value":
+        field_name = chart_specs["field name"]
+        aggregation = chart_specs["aggregation applied"]
+        filtered_data = apply_filters(data, chart_specs.get("filter criteria", {}))
+        value = apply_aggregation(filtered_data, field_name, aggregation)
+        st.metric(label=field_name, value=value, delta=None)
+
+    # Handle other chart types
+    else:
+        x_axis = chart_specs["x axis"]
+        y_axis_field = chart_specs["y axis"]["field name"]
+        y_axis_aggregation = chart_specs["y axis"]["aggregation applied"]
+        filtered_data = apply_filters(data, chart_specs.get("filter criteria", {}))
+
+        chart = create_altair_chart(chart_specs["chart type"], filtered_data, x_axis, y_axis_field, y_axis_aggregation)
+        st.altair_chart(chart, use_container_width=True)
+
+# Function to apply filters to the data
+def apply_filters(data, filter_criteria):
+    if filter_criteria:
+        field_name = filter_criteria["field_name"]
+        operator = filter_criteria["operator"]
+        value = filter_criteria["value"]
+        return data[eval(f"data['{field_name}'] {operator} {value}")].copy()
+    else:
+        return data
+
+# Function to apply aggregation to a field
+def apply_aggregation(data, field_name, aggregation):
+    return eval(f"data['{field_name}'].{aggregation}()")
+
+# Function to create Altair charts
+def create_altair_chart(chart_type, data, x_axis, y_axis_field, y_axis_aggregation):
+    if chart_type == "bar chart":
+        return alt.Chart(data).mark_bar().encode(
+            x=x_axis,
+            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
+        )
+    elif chart_type == "area chart":
+        return alt.Chart(data).mark_area().encode(
+            x=x_axis,
+            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
+        )
+    elif chart_type == "line chart":
+        return alt.Chart(data).mark_line().encode(
+            x=x_axis,
+            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
+        )
+    elif chart_type == "pie chart":
+        return alt.Chart(data).mark_pie().encode(
+            theta=x_axis,
+            value=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
+        )
+    else:
+        st.error("Invalid chart type")
+        return None
+
+# Call the chart creation function
+create_chart(json_input)
 
