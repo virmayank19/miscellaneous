@@ -1,33 +1,38 @@
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from nmslib import Nmslib
+import langchain
+from langchain.llms import Llama2
+from langchain.vectorstores import FAISS
 
-# Sample data
-data = {
-    "SourceName": "name of the Source system",
-    "L8n": "trading location of the Source system",
-    "Currency": "Currency in which the amount of the position is denoted"
-}
+# Load the Llama2 model
+llm = Llama2(checkpoint="llama2-chat-13B")  # Substitute with your desired Llama2 checkpoint
 
-# Embedding model
-model = SentenceTransformer('all-mpnet-base-v2')
+# Create a FAISS vectorstore for retrieval
+vectorstore = FAISS()
 
-# Create embeddings for field descriptions
-embeddings = model.encode(list(data.values()))
+# Load the text document, chunk it, and add to the vectorstore
+with open("your_text_document.txt", "r") as f:
+    text = f.read()
+    chunks = langchain.utils.chunk_text(text, chunk_size=512)  # Adjust chunk size
+    vectorstore.add_documents(chunks)
 
-# Indexing for efficient search
-index = Nmslib(space='cosinesimil')
-index.addDataPointBatch(embeddings)
-index.createIndex({'post': 2}, print_progress=True)  # Adjust parameters for best performance
+# Define a function to process prompts and generate responses
+def generate_response(user_prompt, system_prompt):
+    query = f"{user_prompt}\n{system_prompt} {llm.generate_end_of_text()}"
+    response = llm(query)
+    return response
 
-def vector_search(query):
-    """Performs vector search and returns the most similar field name."""
-    query_embedding = model.encode([query])[0]
-    results = index.knnQuery(query_embedding, k=1)  # Find the closest match
-    closest_index = results[0][0]
-    return list(data.keys())[closest_index]
+# Get user prompt and system prompt
+user_prompt = input("Enter your prompt: ")
+system_prompt = input("Enter the system prompt: ")
 
-# Example usage
-query = "location"
-result = vector_search(query)
-print("Most relevant field for '{}': {}".format(query, result))
+# Retrieve relevant chunks based on user prompt
+relevant_chunks = vectorstore.query(user_prompt, k=5)  # Adjust number of retrieved chunks
+
+# Combine relevant chunks with system prompt and generate response
+combined_prompt = "\n".join(relevant_chunks) + "\n" + system_prompt
+response = generate_response(user_prompt, combined_prompt)
+
+print(response)
+
+
+
+
