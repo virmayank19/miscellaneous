@@ -36,3 +36,34 @@ print(response)
 
 
 
+
+
+
+import langchain
+from langchain.vectorstores import FAISS
+from sentence_transformers import SentenceTransformer  # Import Sentence Transformers
+
+# Load the SentenceTransformer model
+model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
+
+# Define the embeddings function using Sentence Transformers
+def embeddings_function(text):
+    return model.encode(text)
+
+# Create the FAISS vectorstore with the embeddings function
+vectorstore = FAISS(embeddings_function=embeddings_function)
+
+# Load the text document, chunk it, and add to the vectorstore
+with open("your_text_document.txt", "r") as f:
+    text = f.read()
+    chunks = langchain.utils.chunk_text(text, chunk_size=512)  # Adjust chunk size as needed
+    vectorstore.add_documents(chunks)
+
+# Get user prompt
+user_prompt = input("Enter your prompt: ")
+
+# Retrieve relevant chunks based on user prompt
+relevant_chunks = vectorstore.query(user_prompt, k=5)  # Adjust number of retrieved chunks
+
+print(relevant_chunks)
+
