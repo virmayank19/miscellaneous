@@ -75,3 +75,15 @@ relevant_chunks = retrieve_relevant_chunks(prompt)
 text = generate_text_with_chunks(prompt, relevant_chunks)
 
 print(text)
+
+
+
+
+Restrictions:
+
+Limited scope: The license only applies to the "Llama Materials," which include the model code and weights, not any data used to train it.
+Attribution: You must credit Meta as the owner of Llama 2.
+Acceptable Use Policy: You must comply with Meta's Acceptable Use Policy, which prohibits harmful or unethical uses like generating hate speech or spreading misinformation.
+High user base restriction: If your application has over 700 million monthly active users, you need additional permission from Meta. This exemption exists to prevent major competitors from freely using the model.
+No model improvement: You can't use Llama 2 to improve other large language models (excluding derivative works of Llama 2 itself).
+Open source vs. not open source:
