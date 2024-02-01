@@ -1,1 +1,28 @@
 
+import transformers
+from langchain.llms import OpenAI
+from langchain.vectorstores import FAISS
+from langchain.chains import RetrievalQAChain
+
+# Load LLM and tokenizer
+model_id = "mistralai/Mixtral-8x7B-v0.1"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+llm = OpenAI(model_id)
+
+# Load text documents
+documents = ["path/to/document1.txt", "path/to/document2.txt", ...]
+
+# Create FAISS vector store
+vectorstore = FAISS.from_documents(documents, tokenizer)
+
+# Create retrieval chain
+chain = RetrievalQAChain(
+    llm=llm,
+    retriever=vectorstore,
+    max_retrieve_hits=5,  # Adjust as needed
+)
+
+# Prompt the model with a query
+prompt = "What are the benefits of using LangChain with LLMs?"
+response = chain.run(prompt)
+print(response)
