@@ -1,15 +1,51 @@
-Imagine a library filled with valuable reports, but without proper access control, chaos would ensue. Our reporting application addresses this by offering robust entitlements, ensuring the right users have access to the right information at the right time.
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from annoy import AnnoyIndex
+from data_definitions import data
 
-What are Entitlements?
+# Create text embeddings for each dataset
+models = []
+embeddings = []
+for i in range(1, 11):
+    model = SentenceTransformer(f'all-mpnet-base-v2-{i}')  # Choose a suitable model for each dataset
+    models.append(model)
+    dataset = f'data{i}'
+    embeddings.append(model.encode(list(data[dataset].values())))
 
-Entitlements define the actions a user can perform within the application. This includes:
+# Build vector indexes for each dataset
+indexes = []
+for i, emb in enumerate(embeddings):
+    f = 768  # Dimensionality of the embeddings from the 'all-mpnet-base-v2' model
+    t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
+    for j, embedding in enumerate(emb):
+        t.add_item(j, embedding)
+    t.build(10)  # Adjust the number of trees for performance
+    indexes.append(t)
 
-Viewing reports: Grant users access to specific reports based on their roles and responsibilities. Imagine a sales manager needing access to regional sales reports, while a marketing manager focuses on campaign performance reports.
-Running schedules: Empower authorized users to trigger report generation manually or on a defined schedule. For example, a financial analyst might need to run daily financial reports, while a quarterly inventory report might be initiated by the operations manager.
-Managing schedules: Provide certain users with the ability to create, edit, and delete schedules, ensuring efficient report delivery workflows. This might be the domain of system administrators or designated report owners.
-Benefits of Entitlements:
+def vector_search(query, top_k=5):
+    best_match_dataset = None
+    best_match_distance = float('inf')
 
-Enhanced Security: Restricting access to sensitive reports prevents unauthorized viewing, safeguarding confidential information.
-Improved Accountability: Entitlements document user permissions, ensuring clear audit trails and accountability for actions taken.
-Streamlined Workflows: Granting the right access empowers users to efficiently access and utilize relevant reports, boosting productivity.
-Compliance Adherence: Entitlements can be aligned with organizational compliance requirements, ensuring data privacy and security.
+    for i, index in enumerate(indexes):
+        query_embedding = models[i].encode([query])[0]
+        nns = index.get_nns_by_vector(query_embedding, top_k, include_distances=True)
+
+        avg_distance = np.mean(nns[1])
+
+        if avg_distance < best_match_distance:
+            best_match_distance = avg_distance
+            best_match_dataset = f'data{i + 1}'
+
+    results = []
+    for idx, distance in zip(nns[0], nns[1]):
+        field_name = list(data[best_match_dataset].keys())[idx]
+        results.append((field_name, distance))
+
+    return results, best_match_dataset
+
+# Example usage
+query = "location"
+results, best_match_dataset = vector_search(query, top_k=5)
+print(f"Top 5 matching results for '{query}' in the most relevant dataset '{best_match_dataset}':")
+for result in results:
+    print(result[0], " - Distance:", result[1])
