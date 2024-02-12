@@ -1,24 +1,22 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from annoy import AnnoyIndex
-from data_definitions import data
+from data_definitions import data1, positionData, LocationData
 
-# Create text embeddings for each dataset
 models = []
 embeddings = []
-for i in range(1, 11):
-    model = SentenceTransformer(f'all-mpnet-base-v2-{i}')  # Choose a suitable model for each dataset
-    models.append(model)
-    dataset = f'data{i}'
-    embeddings.append(model.encode(list(data[dataset].values())))
-
-# Build vector indexes for each dataset
 indexes = []
-for i, emb in enumerate(embeddings):
+
+def addDataSet(data, model_name='all-mpnet-base-v2'):
+    model = SentenceTransformer(model_name)  # Choose a suitable model for each dataset
+    models.append(model)
+    dataset_embeddings = model.encode(list(data.values()))
+    embeddings.append(dataset_embeddings)
+
     f = 768  # Dimensionality of the embeddings from the 'all-mpnet-base-v2' model
     t = AnnoyIndex(f, 'angular')  # Use angular distance for text similarity
-    for j, embedding in enumerate(emb):
-        t.add_item(j, embedding)
+    for i, embedding in enumerate(dataset_embeddings):
+        t.add_item(i, embedding)
     t.build(10)  # Adjust the number of trees for performance
     indexes.append(t)
 
@@ -34,16 +32,21 @@ def vector_search(query, top_k=5):
 
         if avg_distance < best_match_distance:
             best_match_distance = avg_distance
-            best_match_dataset = f'data{i + 1}'
+            best_match_dataset = data_names[i]  # Assuming you have a list of dataset names like ['data1', 'positionData', 'LocationData']
 
     results = []
     for idx, distance in zip(nns[0], nns[1]):
-        field_name = list(data[best_match_dataset].keys())[idx]
+        field_name = list(data_names[i].keys())[idx]  # Assuming data_names is a list of dictionaries
         results.append((field_name, distance))
 
     return results, best_match_dataset
 
 # Example usage
+data_names = ['data1', 'positionData', 'LocationData']  # List of dataset names
+addDataSet(data1, model_name='all-mpnet-base-v2-data1')
+addDataSet(positionData, model_name='all-mpnet-base-v2-positionData')
+addDataSet(LocationData, model_name='all-mpnet-base-v2-LocationData')
+
 query = "location"
 results, best_match_dataset = vector_search(query, top_k=5)
 print(f"Top 5 matching results for '{query}' in the most relevant dataset '{best_match_dataset}':")
