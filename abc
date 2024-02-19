@@ -1,3 +1,45 @@
-I hope this message finds you well! My name is [Your Name], and I'm thrilled to be your buddy here at [Company Name]. Congratulations on joining our team!
+Slide 1: Title Slide
 
-I understand that starting a new role can come with a lot of questions, and I'm here to help make your transition smoother. Whether it's getting to know the ropes, understanding our company culture, or anything else on your mind, feel free to reach out. We can grab a coffee, have a quick chat, or connect in any way that suits you
+Title: Unlocking Data Insights with AI: Natural Language Queries to Charts
+
+Subtitle: Integrating AI Features into Analytical Software
+
+Slide 2: Introduction
+
+Imagine asking your software, "Show me sales trends across regions," and instantly seeing a captivating chart. This research explores integrating AI into analytical software, enabling such natural language queries (NLQs) to generate insightful charts.
+
+Slide 3: Initial Success with Large Language Models (LLMs)
+
+We initially explored leveraging powerful LLMs like ChatGPT and Bard. By providing a system prompt describing the data model and user query, we received structured JSON output for chart generation. This approach yielded impressive results.
+
+Slide 4: Addressing Security and Context Concerns
+
+However, relying on external LLMs raised two concerns:
+
+Data Security: Sharing sensitive data model information with external companies posed security risks.
+Limited Context: LLMs struggled with the complexity and size of our data models.
+Slide 5: Empowering Security and Scalability with Local Models
+
+We transitioned to powerful locally hosted models like LLAMA2 and Mixtral. This ensured complete data privacy and delivered performance comparable to external LLMs.
+
+Slide 6: Conquering the Large Context Challenge
+
+Large data models still exceeded the context limitations of LLMs. Our innovative solution:
+
+Extract an initial JSON output without revealing the data model.
+Use intelligent local search to identify relevant fields within the data model.
+Combine extracted fields with the initial JSON and feed them to the LLM for the final output.
+This effectively tackled the large context hurdle.
+
+Slide 7: Optimizing Cost with One-Pass Execution
+
+Multiple LLM queries could become expensive. To address this:
+
+We embedded our data model as vectors for efficient search.
+Using vector search, we retrieved the top 30 most relevant fields based on the NLQ.
+We combined these fields with the system prompt and fed them to the LLM for a single execution.
+This reduced costs while maintaining accuracy.
+
+Slide 8: Conclusion and Future
+
+This research successfully integrated AI into our analytical software, enabling users to convert NLQs into valuable charts. We achieved secure, scalable, and cost-effective chart generation. Future work may involve expanding data model compatibility and refining user query comprehension.
