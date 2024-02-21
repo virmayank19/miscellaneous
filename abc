@@ -1,7 +1,1 @@
-As part of our ongoing efforts to integrate AI features into our analytical software, I have been working on a side research project focused on converting Natural Language Queries (NLQ) into charts.
 
-I've developed a promising approach for this functionality and have already tested it with 20-25 queries that I created. The initial results are encouraging, but to ensure the robustness of the solution, I need a more diverse set of NLQ based on our data model.
-
-I kindly request each of you to contribute to this experiment by creating at least 2-3 NLQ based on our data model. Since everyone has a unique style of asking questions, this will provide valuable insights and help validate the effectiveness of the approach.
-
-Your input is crucial in refining and perfecting this integration. Please send me the NLQ queries at your earliest convenience. If you have any questions or need additional information, feel free to reach out.
