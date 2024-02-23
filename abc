@@ -1,1 +1,11 @@
+You have to convert "Break up of cash per location through pie chart where currency is USD" this natural language query and you have to convert it into a MDX query. Following are the fields along with their description. You have to understand their description in order to better understand the input query.
 
+sourceName: Name of the source system 
+l8n: Trading location of the source system
+dayCash: Cash received or paid on the day reported by the source system
+currency: Currency in which amounts on the position are denominated
+seliCcy: Currency in which "sell" amounts of the reverse positions are denominated
+buyCcy: Currency in which "buy" amounts of the reverse positions are denominated
+dayCashAdjustment: Adjustment applied to the Day Cash
+
+The answer should only consist of the output in the specified JSON format and no extra information.
