@@ -1,0 +1,46 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from time import sleep  # For simulated delays
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
+# Replace with your Chrome WebDriver path (download from https://chromedriver.chromium.org/)
+chromedriver_path = "/chromedriver"  # Example path
+service = Service(executable_path='./chromedriver.exe')
+# Set up Chrome options (optional, adjust as needed)
+chrome_options = webdriver.ChromeOptions()
+# chrome_options.add_argument("--headless")  # Run Chrome in headless mode (optional)
+# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager(driver_version='124').install()), options=chrome_options)
+
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+try:
+  # Open ChatGPT website
+  driver.get("https://chat.openai.com/")
+
+  # Simulate login (replace with actual login steps)
+  # ... (code to enter username and password)
+
+  # Wait for login to complete (replace with a more robust check)
+  sleep(10)
+
+  # Find the prompt input field (replace with actual selector)
+  prompt_field = driver.find_element(By.ID, "prompt-textarea")
+
+  # Enter your prompt
+  prompt_field.send_keys("what is square of 45.")
+  prompt_field.send_keys(Keys.ENTER)
+
+  # Wait for response (replace with a more robust check)
+  sleep(30)
+
+  # Simulate reading the response (replace with actual content extraction)
+  response_area = driver.find_element(By.ID, "prompt-textarea")
+  print("ChatGPT response:")
+  print(response_area.text.strip())
+
+finally:
+  # Close the browser
+  driver.quit()
