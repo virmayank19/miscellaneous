@@ -3,3 +3,10 @@ Based on the provided dataset, please analyze and present the top 3 to 5 most in
 Your analysis should be detailed and insightful, focusing on the most compelling aspects of the dataset. Provide a clear and concise summary that highlights the key findings, ensuring that the trends or observations are presented in an engaging and informative manner.
 
 Please ensure that your response encourages creativity and originality in identifying and presenting the most compelling insights from the dataset while maintaining accuracy and relevance
+
+
+"Provide insights into the distribution of numerical variables in this dataset. Identify any significant skewness or outliers."
+
+"Detect outliers in the 'sales' column of this dataset and provide a brief explanation of their impact on the analysis."
+
+"Examine the time series data and identify any seasonality or trends present. Provide a summary of your findings."
