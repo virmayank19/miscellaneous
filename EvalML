@@ -1,149 +1,68 @@
+What is REDIS?
+REDIS (short for REmote DIctionary Server) is an open-source, in-memory data store that functions as a key-value store, cache, and message broker.
 
+Why use REDIS?
+Blazing Fast Performance: 
+Efficient Caching: 
+Diverse Data Structures: 
+Real-time Communication:  REDIS can act as a message broker, facilitating communication between different parts of your application in real-time.
+Scalability: As your application grows, REDIS can adapt.  It offers horizontal scaling capabilities by adding more servers and sharding the data across 
+Simplicity:  Compared to complex relational databases, REDIS boasts a straightforward key-value data model.
 
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
+ATOMICITY
+One of the key highlights of Redis is that every operation fired on Redis is atomic. This means that when a particular command is executed, other commands wait until the first command is finished before they start. This avoids the complexity of having to worry about concurrency issues.
 
-# Load your CSV data
-file_path = 'your_data.csv'
-data = pd.read_csv(file_path)
+Single Theaded:
+Redis uses a single-threaded event loop to handle a large number of connections. This is possible because most of the time is spent waiting for I/O operations to complete, such as reading from a socket. Since Redis operations are in-memory, they are very fast to execute. This allows Redis to handle a large number of connections without the need for complex concurrency controls.
 
-# Function to create Single Value chart
-def create_single_value_chart(query):
-    field_name = query["field name"]
-    aggregation_applied = query["aggregation applied"]
-    filter_criteria = query["filter criteria"]
+Traditionally, a common approach to handle a large number of connections is to use multi-threading. In multi-threading, whenever a client connects to the database, a new thread is spun up to handle the request. This can lead to problems if data needs to be accessed by multiple threads at the same time. To solve this problem, threads need to use mutexes and semaphores to ensure data consistency, but this can slow down performance.
 
-    filtered_data = data[data[filter_criteria["field name"]].apply(lambda x: eval(f'x {filter_criteria["operator"]} {filter_criteria["value"]}'))]
-    result = filtered_data[field_name].agg(aggregation_applied)
+Redis avoids the complexity of multi-threading by using a single-threaded model with I/O multiplexing. I/O multiplexing allows a single thread to handle multiple connections efficiently. The idea is that instead of creating a new thread for each connection, Redis uses a single thread to monitor all connections for incoming data. When data arrives from a connection, the thread processes the data and then moves on to the next connection. This way, Redis can handle a large number of connections without the overhead of managing multiple threads and complex locking mechanisms.
 
-    # Plotting
-    plt.figure(figsize=(6, 4))
-    plt.bar(["Result"], [result])
-    plt.title("Single Value Chart")
-    st.pyplot()
+Redis uses a single-threaded event loop to handle a large number of connections. This is possible because most of the time is spent waiting for I/O operations to complete, such as reading from a socket. Since Redis operations are in-memory, they are very fast to execute. This allows Redis to handle a large number of connections without the need for complex concurrency controls.
 
-# Function to create other charts
-def create_chart(query):
-    chart_type = query["chart type"]
-    x_axis = query["x axis"]
-    y_axis = query["y axis"]
-    filter_criteria = query["filter criteria"]
+Persistence Options:
+RDB (Snapshotting):
 
-    filtered_data = data[data[filter_criteria["field name"]].apply(lambda x: eval(f'x {filter_criteria["operator"]} {filter_criteria["value"]}'))]
+Creates periodic snapshots of the entire dataset at specific intervals (e.g., every 5 minutes).
+Offers a fast recovery point in case of server failure as you can restore from the latest snapshot.
+Downside: Data loss between the last snapshot and the failure can't be recovered (configurable trade-off between data durability and performance).
+AOF (Append-only File):
 
-    # Plotting
-    plt.figure(figsize=(8, 6))
+Maintains a log of all write operations executed on the server.
+Enables reconstruction of the complete dataset by replaying the log upon restart.
+Offers stronger data durability as it captures every write operation.
+Can impact performance due to the constant logging overhead.
+Choosing between RDB and AOF:
 
-    if chart_type == "bar chart":
-        plt.bar(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
-    elif chart_type == "area chart":
-        plt.fill_between(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
-    elif chart_type == "line chart":
-        plt.plot(filtered_data[x_axis], filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]))
-    elif chart_type == "pie chart":
-        plt.pie(filtered_data[y_axis["field name"]].agg(y_axis["aggregation applied"]), labels=filtered_data[x_axis])
+If data persistence with minimal downtime is critical, use RDB with a suitable snapshotting frequency.
+For scenarios requiring maximum data durability and potential for recovering every change, prioritize AOF.
+Consider using both RDB and AOF for enhanced disaster recovery capabilities.
+2. Replication and High Availability:
+Replication:
 
-    plt.title(f"{chart_type.capitalize()} Chart")
-    plt.xlabel(x_axis)
-    plt.ylabel(f"{y_axis['aggregation applied']}({y_axis['field name']})")
-    st.pyplot()
+Creates replicas (slave servers) that copy data from a primary server (master).
+Enables automatic failover to a replica in case the primary server fails.
+Different replication configurations exist:
+Sync Replication: Real-time replication ensures replicas are always in sync with the primary.
+Asynchronous Replication: Replicas lag slightly behind the primary, offering higher performance but potential data loss during failover.
+High Availability (HA):
 
-# Streamlit UI
-st.title("Chart Generator")
+Refers to the system's ability to maintain continuous operation despite failures.
+Achieved through replication and automated failover mechanisms.
+Popular solutions include:
+Sentinel: Monitors REDIS servers, initiates failover to a replica upon primary failure, and performs automatic leader election.
+Cluster: Distributed architecture offering horizontal scaling and automatic partitioning of data across nodes.
+3. Security Considerations:
+Authentication:
 
-# Get JSON input from the user
-json_input = st.text_area("Enter JSON input:")
-try:
-    query = eval(json_input)  # Convert string to dictionary
-except:
-    st.error("Invalid JSON input. Please enter a valid JSON.")
-    query = None
+Restricts unauthorized access to the REDIS server.
+Common methods include password authentication and TLS/SSL client certificates.
+Authorization:
 
-# Generate chart based on the input
-if query:
-    st.subheader("Generated Chart:")
-    if query["chart type"] == "Single Value":
-        create_single_value_chart(query)
-    else:
-        create_chart(query)
+Controls what users or applications can do with the data after they are authenticated.
+REDIS ACL (Access Control Lists) allow specifying granular permissions for specific keys or operations.
+Encryption:
 
-
-
-
-
-import streamlit as st
-import pandas as pd
-import altair as alt
-
-# Load the CSV data
-data = pd.read_csv("data.csv")
-
-# Get JSON input from the user
-json_input = st.text_area("Enter JSON input:")
-
-# Function to create the chart based on JSON specifications
-def create_chart(json_input):
-    chart_specs = json.loads(json_input)
-
-    # Handle Single Value chart
-    if chart_specs["chart type"] == "Single Value":
-        field_name = chart_specs["field name"]
-        aggregation = chart_specs["aggregation applied"]
-        filtered_data = apply_filters(data, chart_specs.get("filter criteria", {}))
-        value = apply_aggregation(filtered_data, field_name, aggregation)
-        st.metric(label=field_name, value=value, delta=None)
-
-    # Handle other chart types
-    else:
-        x_axis = chart_specs["x axis"]
-        y_axis_field = chart_specs["y axis"]["field name"]
-        y_axis_aggregation = chart_specs["y axis"]["aggregation applied"]
-        filtered_data = apply_filters(data, chart_specs.get("filter criteria", {}))
-
-        chart = create_altair_chart(chart_specs["chart type"], filtered_data, x_axis, y_axis_field, y_axis_aggregation)
-        st.altair_chart(chart, use_container_width=True)
-
-# Function to apply filters to the data
-def apply_filters(data, filter_criteria):
-    if filter_criteria:
-        field_name = filter_criteria["field_name"]
-        operator = filter_criteria["operator"]
-        value = filter_criteria["value"]
-        return data[eval(f"data['{field_name}'] {operator} {value}")].copy()
-    else:
-        return data
-
-# Function to apply aggregation to a field
-def apply_aggregation(data, field_name, aggregation):
-    return eval(f"data['{field_name}'].{aggregation}()")
-
-# Function to create Altair charts
-def create_altair_chart(chart_type, data, x_axis, y_axis_field, y_axis_aggregation):
-    if chart_type == "bar chart":
-        return alt.Chart(data).mark_bar().encode(
-            x=x_axis,
-            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
-        )
-    elif chart_type == "area chart":
-        return alt.Chart(data).mark_area().encode(
-            x=x_axis,
-            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
-        )
-    elif chart_type == "line chart":
-        return alt.Chart(data).mark_line().encode(
-            x=x_axis,
-            y=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
-        )
-    elif chart_type == "pie chart":
-        return alt.Chart(data).mark_pie().encode(
-            theta=x_axis,
-            value=alt.Y(f"{y_axis_aggregation}({y_axis_field}):Q")
-        )
-    else:
-        st.error("Invalid chart type")
-        return None
-
-# Call the chart creation function
-create_chart(json_input)
-
+Protects data at rest (on disk) and in transit (over the network) from unauthorized access.
+REDIS supports encryption of the RDB snapshot file and communication between clients and servers using TLS/SSL.
