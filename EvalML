@@ -15,6 +15,36 @@ One of the key highlights of Redis is that every operation fired on Redis is ato
 Single Theaded:
 Redis uses a single-threaded event loop to handle a large number of connections. This is possible because most of the time is spent waiting for I/O operations to complete, such as reading from a socket. Since Redis operations are in-memory, they are very fast to execute. This allows Redis to handle a large number of connections without the need for complex concurrency controls.
 
+
+Single Thread for Connections and Reading, Single Thread for Execution:
+
+Connection Management and Reading: REDIS utilizes a single thread for managing client connections and reading incoming commands. This thread listens for new connections, reads incoming data from clients (including the command itself), and adds the command to an internal queue.
+Command Execution: A separate single thread is responsible for executing commands. It retrieves commands from the queue one by one and processes them. This thread performs all the necessary operations on the data store (e.g., retrieving data from a hash, adding elements to a set) and generates a response.
+Non-Blocking I/O: While the execution thread processes a command, the connection management thread doesn't wait idly. It utilizes a non-blocking I/O model, allowing it to handle new connections or read data from other clients concurrently. This improves overall efficiency by keeping the connection management thread busy even while the execution thread is working on a command.
+Event Loop: Both the connection management and execution threads operate within an event loop. The event loop monitors various events like incoming connections, network activity, and command completion. Based on the event type, the loop directs the appropriate thread to handle the situation.
+Essentially, REDIS employs two distinct single-threaded models:
+
+Connection Management & Reading: Manages client connections, reads commands, and queues them for execution.
+Command Execution: Processes commands one by one from the queue, interacts with the data store, and generates responses.
+This separation allows REDIS to handle connections and command processing efficiently, while the non-blocking I/O model within the connection management thread further optimizes resource utilization.
+
+Important Note:
+
+While REDIS uses a single thread for each of these functionalities (connections/reading and execution), it doesn't directly make system calls and wait for events within the same thread.  The event loop facilitates handling various events without complete blocking, allowing the threads to maintain responsiveness.
+
+pen_spark
+
+
+
+
+tune
+
+share
+
+
+more_vert
+
+
 Traditionally, a common approach to handle a large number of connections is to use multi-threading. In multi-threading, whenever a client connects to the database, a new thread is spun up to handle the request. This can lead to problems if data needs to be accessed by multiple threads at the same time. To solve this problem, threads need to use mutexes and semaphores to ensure data consistency, but this can slow down performance.
 
 Redis avoids the complexity of multi-threading by using a single-threaded model with I/O multiplexing. I/O multiplexing allows a single thread to handle multiple connections efficiently. The idea is that instead of creating a new thread for each connection, Redis uses a single thread to monitor all connections for incoming data. When data arrives from a connection, the thread processes the data and then moves on to the next connection. This way, Redis can handle a large number of connections without the overhead of managing multiple threads and complex locking mechanisms.
