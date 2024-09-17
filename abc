@@ -1,1 +1,95 @@
-\\s*\\{\\s*(?:[^\\s{}\\\\]*(?:\\s+[^\\s{}\\\\]*)*)\\s*}
+ Prompting Techniques: Zero-Shot, One-Shot, Few-Shot, and Dynamic Few-Shot
+	Zero-Shot Prompting:
+		Definition: Providing the LLM with a prompt without any examples.
+		Example: "Write a poem about a robot who dreams of becoming a chef."
+	One-Shot Prompting:
+		Definition: Providing the LLM with a single example of the desired task.
+		Example: "Translate the sentence 'Hello, how are you?' into French."
+	Few-Shot Prompting:
+		Definition: Providing the LLM with a few examples of the desired task.
+		Example: "Translate the following sentences into French: 1. I like pizza. 2. She is a doctor. 3. What is your name?"
+	Dynamic Few-Shot Prompting:
+		Definition: Selecting and adjusting the few-shot examples based on the specific prompt or task.
+		Example: For a prompt about a specific historical event, the LLM might retrieve and use relevant historical documents as few-shot examples.
+
+What is CoT?
+Definition: Chain of Thought (CoT) is a prompting technique that encourages LLMs to break down complex problems into smaller, more manageable steps.
+How it Works:
+The prompt explicitly asks the model to "think step-by-step" or provide a "reasoning process."
+This helps the model generate more coherent and accurate responses by guiding its thought process.
+Benefits of CoT:
+Improved Accuracy: CoT can lead to more accurate and informative responses, especially for complex or unfamiliar tasks.
+Explainability: The step-by-step reasoning process can make the model's output more transparent and understandable.
+Generalizability: CoT can help LLMs generalize their knowledge to new tasks and situations.
+
+AI Techniques: Few-Shot Prompting
+What is Few-Shot Prompting?
+Definition: Few-shot prompting involves providing the LLM with a few examples of the desired task before giving it a new prompt.
+How it Works:
+The examples serve as a guide for the model, helping it understand the task and the expected output format.
+The model can then apply this knowledge to new, unseen examples.
+Advantages of Few-Shot Prompting:
+Efficiency: It allows LLMs to perform tasks with minimal training data.
+Flexibility: It can be adapted to a variety of tasks and domains.
+Human-like Learning: Few-shot prompting mimics how humans learn from limited examples.
+
+
+ AI Techniques: Dynamic Few-Shot Prompting
+What is Dynamic Few-Shot Prompting?
+Definition: Unlike static few-shot prompting, dynamic few-shot prompting allows the LLM to dynamically select and adjust the few-shot examples based on the specific prompt or task.
+How it Works:
+The model may use techniques like retrieval augmented generation (RAG) to find relevant examples from a large knowledge base.
+The selected examples can be weighted or prioritized based on their relevance to the current prompt.
+Benefits of Dynamic Few-Shot Prompting:
+Adaptability: It enables the LLM to better adapt to a wider range of tasks and prompts.
+Efficiency: By selecting only the most relevant examples, it can improve the model's efficiency.
+Improved Performance: Dynamic few-shot prompting can lead to higher-quality outputs, especially for complex or domain-specific tasks.
+
+
+ AI Techniques: Retrieval Augmented Generation (RAG)
+What is RAG?
+Definition: Retrieval Augmented Generation (RAG) is a technique that combines information retrieval with language generation.
+How it Works:
+The LLM first retrieves relevant information from a knowledge base or database.
+This retrieved information is then used to augment the LLM's response, providing more accurate and informative outputs.
+Benefits of RAG:
+Fact-Based Responses: RAG helps LLMs generate responses that are grounded in factual information.
+Improved Accuracy: By incorporating relevant knowledge, RAG can improve the accuracy and quality of the LLM's outputs.
+Efficiency: RAG can reduce the LLM's reliance on in-context learning, making it more efficient for certain tasks.
+
+
+
+AI Techniques: Vector Search
+What is Vector Search?
+Definition: Vector search is a technique used to find items similar to a given query based on their semantic meaning or content.
+How it Works:
+Data is represented as vectors in a high-dimensional space, where each dimension represents a different aspect of the data.
+Similarity between items is measured by the distance between their vectors.
+Vector search algorithms find items that are closest to the query vector in the vector space.
+Applications in LLM Systems:
+Document Retrieval: Finding relevant documents or information from a large corpus of text.
+Question Answering: Finding answers to questions from text-based sources.
+Translation: Finding the best translation for a given word or phrase.
+Example:
+A user asks an LLM to find an article about climate change.
+The LLM uses vector search to find articles that are semantically similar to the query, such as articles about global warming, environmental sustainability, or climate action.
+Slide 7: AI Techniques: Guardrails and Safety
+Why are Guardrails Necessary?
+Bias: AI models can inherit biases from the data they are trained on.
+Misuse: LLMs can be used to generate harmful or misleading content.
+Unintended Behavior: LLMs may produce unexpected or harmful outputs due to their complexity.
+Self-Check Mechanisms:
+Model Monitoring: Monitoring the model's performance in real-time to detect and mitigate harmful outputs.
+Red Teaming: Employing adversarial techniques to challenge the model's assumptions and identify vulnerabilities.
+Nemo Guardrails and Other Tools:
+Nemo Guardrails: A framework developed by Google AI to help developers build safer and more reliable AI systems.
+Other Tools: There are many other tools and techniques available to help developers build safer and more responsible AI systems.
+
+Slide 8: AI Techniques: Ethical Considerations
+Bias in AI Models:
+Algorithmic Bias: AI models can perpetuate or amplify existing biases in the data they are trained on.
+Unintended Bias: Models may exhibit unintended biases that are not present in the training data.
+Responsible AI Development and Deployment:
+Diversity and Inclusion: Ensuring that AI development teams are diverse and inclusive.
+Transparency and Explainability: Making AI models more transparent and understandable.
+Accountability: Holding AI developers and deployers accountable for the impact of their models.
