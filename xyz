@@ -1,69 +1,41 @@
-import langchain
-from langchain.llms import Llama2
-from langchain.vectorstores import FAISS
+import pandas as pd
+data = {
+  "calories": [420, 380, 390],
+  "duration": [50, 40, 45]
+}
 
-# Load the Llama2 model
-llm = Llama2(checkpoint="llama2-chat-13B")  # Substitute with your desired Llama2 checkpoint
+#load data into a DataFrame object:
+df = pd.DataFrame(data)
 
-# Create a FAISS vectorstore for retrieval
-vectorstore = FAISS()
-
-# Load the text document, chunk it, and add to the vectorstore
-with open("your_text_document.txt", "r") as f:
-    text = f.read()
-    chunks = langchain.utils.chunk_text(text, chunk_size=512)  # Adjust chunk size
-    vectorstore.add_documents(chunks)
-
-# Define a function to process prompts and generate responses
-def generate_response(user_prompt, system_prompt):
-    query = f"{user_prompt}\n{system_prompt} {llm.generate_end_of_text()}"
-    response = llm(query)
-    return response
-
-# Get user prompt and system prompt
-user_prompt = input("Enter your prompt: ")
-system_prompt = input("Enter the system prompt: ")
-
-# Retrieve relevant chunks based on user prompt
-relevant_chunks = vectorstore.query(user_prompt, k=5)  # Adjust number of retrieved chunks
-
-# Combine relevant chunks with system prompt and generate response
-combined_prompt = "\n".join(relevant_chunks) + "\n" + system_prompt
-response = generate_response(user_prompt, combined_prompt)
-
-print(response)
+import streamlit as st
 
 
+# Define column configuration
+column_configuration = {
+    "name": st.column_config.TextColumn(
+        "Name", help="The name of the user", max_chars=100, width="medium"
+    ),
+    # ... other column configurations ...
+}
 
+# Display the dataframe with selections activated
+event = st.dataframe(
+    df,
+    column_config=column_configuration,
+    use_container_width=True,
+    hide_index=True,
+    on_select="rerun",
+    selection_mode="single-row",
+)
 
+# Get the selected rows
+selected_rows = event.selection.rows
 
-
-
-import langchain
-from langchain.vectorstores import FAISS
-from sentence_transformers import SentenceTransformer  # Import Sentence Transformers
-
-# Load the SentenceTransformer model
-model = SentenceTransformer('all-mpnet-base-v2')  # Choose a suitable model
-
-# Define the embeddings function using Sentence Transformers
-def embeddings_function(text):
-    return model.encode(text)
-
-# Create the FAISS vectorstore with the embeddings function
-vectorstore = FAISS(embeddings_function=embeddings_function)
-
-# Load the text document, chunk it, and add to the vectorstore
-with open("your_text_document.txt", "r") as f:
-    text = f.read()
-    chunks = langchain.utils.chunk_text(text, chunk_size=512)  # Adjust chunk size as needed
-    vectorstore.add_documents(chunks)
-
-# Get user prompt
-user_prompt = input("Enter your prompt: ")
-
-# Retrieve relevant chunks based on user prompt
-relevant_chunks = vectorstore.query(user_prompt, k=5)  # Adjust number of retrieved chunks
-
-print(relevant_chunks)
-
+# Display the selected data
+st.header("Selected members")
+filtered_df = df.iloc[selected_rows]
+st.dataframe(
+    filtered_df,
+    column_config=column_configuration,
+    use_container_width=True,
+)
